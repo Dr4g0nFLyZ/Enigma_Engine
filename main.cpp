@@ -26,6 +26,16 @@ int main()
       glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
    #endif
 
+   glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // 1. Removes the window border/title bar (Borderless)
+   glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE); // 2. Enables a transparent window framebuffer
+   glfwWindowHint(GLFW_FLOATING, GLFW_TRUE); // 3. Forces the window to always be on top (Always On Top)
+
+   glfwWindowHint(GLFW_DEPTH_BITS, 24); // Good practice
+   glfwWindowHint(GLFW_STENCIL_BITS, 8); // Good practice
+
+   // Add these to explicitly request an 8-bit alpha buffer
+   glfwWindowHint(GLFW_ALPHA_BITS, 8);
+
    // glfw window creation
    // --------------------
    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Enigma Engine", NULL, NULL);
@@ -35,6 +45,10 @@ int main()
       glfwTerminate();
       return -1;
    }
+
+   glfwSetWindowAttrib(window, GLFW_FLOATING, GLFW_TRUE);
+   glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
+
    glfwMakeContextCurrent(window);
    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -45,6 +59,10 @@ int main()
       std::cout << "Failed to initialize GLAD" << std::endl;
       return -1;
    }
+
+   glEnable(GL_DEPTH_TEST);
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
    // build and compile our shader program
    // ------------------------------------
@@ -68,8 +86,11 @@ int main()
 
       // render
       // ------
-      glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+      glClearColor(0.2f, 0.3f, 0.3f, 0.0f);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+      //glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // R, G, B, A
+      //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       // render the triangle
       ourShader.use();
