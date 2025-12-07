@@ -86,11 +86,11 @@ int main()
 
       // render
       // ------
-      glClearColor(0.2f, 0.3f, 0.3f, 0.0f);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-      //glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // R, G, B, A
+      //glClearColor(0.2f, 0.3f, 0.3f, 0.0f);
       //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+      glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // R, G, B, A
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       // render the triangle
       ourShader.use();
