@@ -1,29 +1,23 @@
-# shell.nix
 { pkgs ? import <nixpkgs> {} }:
 
-pkgs.mkShell {
-  name = "clang-dev";
+pkgs.clangStdenv.mkDerivation {
+  name = "clang-dev-shell";
 
-   nativeBuildInputs = [
-      pkgs.pkg-config
-   ];
+  buildInputs = with pkgs; [
+    cmake
+    gdb
+    zlib
+    glm
+    sqlite
+    freetype
+    glfw
+    mesa
+    vulkan-loader
+    vulkan-headers
+  ];
 
-   buildInputs = with pkgs; [
-      gnumake
-      mesa
-      clang
-      glfw
-      glm
-      sqlite
-      freetype
-      curl.dev
-      vulkan-tools
-      vulkan-loader
-      vulkan-headers
-      vulkan-validation-layers
-   ];
-
-   shellHook = ''
-      echo "Entering Clang development shell ($(clang --version))"
-   '';
+  shellHook = ''
+    echo "Entering Enigma_Engine development shell."
+    export VULKAN_SDK="${pkgs.vulkan-loader}"
+    '';
 }
