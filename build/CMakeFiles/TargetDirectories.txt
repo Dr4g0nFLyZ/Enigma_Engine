@@ -1,3 +1,0 @@
-/home/sudoku/Documents/Projects/Enigma_Engine/build/CMakeFiles/hello_world.dir
-/home/sudoku/Documents/Projects/Enigma_Engine/build/CMakeFiles/edit_cache.dir
-/home/sudoku/Documents/Projects/Enigma_Engine/build/CMakeFiles/rebuild_cache.dir
