@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_hello_world_FILE /home/sudoku/Documents/Projects/Enigma_Engine/build/hello_world)
+set(__QT_DEPLOY_TARGET_hello_world_TYPE EXECUTABLE)
