@@ -1,29 +1,5 @@
 const std = @import("std");
 
-// A buffer to hold the string sent from C++
-var buffer: [1024]u8 = undefined;
-
-// C++ calls this to get a "safe" place to write its data
-export fn get_buffer_pointer() [*]u8 {
-    return &buffer;
-}
-
-// C++ calls this after writing the string into the buffer
-export fn process_string(len: usize) i32 {
-    const input = buffer[0..len];
-    
-    // Let's do something: count how many 'e's are in the string
-    var count: i32 = 0;
-    for (input) |char| {
-        if (char == 'e') count += 1;
-    }
-    return count;
-}
-
-export fn add(a: i32, b: i32) i32 {
-   return a + b;
-}
-
 const Vertex = struct {
    x: f32, y: f32, z: f32,
    r: f32, g: f32, b: f32,
