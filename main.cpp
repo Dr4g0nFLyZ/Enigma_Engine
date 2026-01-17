@@ -4,12 +4,20 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
 
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QDebug>
+
 #include <iostream>
 #include <vector>
 #include <fstream>
 
 #include <wasm.h>
 #include <wasmtime.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 public:
@@ -89,6 +97,45 @@ private:
 };
 
 int main(int argc, char *argv[]) {
+   QApplication app(argc, argv);
+
+   FT_Library ft;
+   // 1. Initialize the library
+   if (FT_Init_FreeType(&ft)) {
+      qCritical() << "Could not init FreeType Library";
+      return -1;
+   }
+
+   // 2. Load a font face (replace with your actual font path)
+   FT_Face face;
+   if (FT_New_Face(ft, "FiraMono-Regular.ttf", 0, &face)) {
+      qCritical() << "Failed to load font";
+      return -1;
+   }
+
+   // 3. Set font size (Width, Height in points; 0 lets it scale dynamically)
+   FT_Set_Pixel_Sizes(face, 0, 48);
+
+   // 4. Load the glyph for 'A'
+   // FT_Get_Char_Index finds the glyph ID, FT_Load_Char combines this and loads it
+   if (FT_Load_Char(face, 'A', FT_LOAD_RENDER)) {
+      qCritical() << "Failed to load Glyph";
+      return -1;
+   }
+
+   // 5. Access the bitmap data
+   // face->glyph->bitmap contains the raw pixel buffer
+   FT_Bitmap& bitmap = face->glyph->bitmap;
+
+   qDebug() << "Successfully loaded 'A'";
+   qDebug() << "Width:" << bitmap.width;
+   qDebug() << "Rows:" << bitmap.rows;
+   qDebug() << "Pitch (Bytes per row):" << bitmap.pitch;
+
+   // Clean up
+   FT_Done_Face(face);
+   FT_Done_FreeType(ft);
+
    // --- Setup the Engine ---
    wasm_config_t* config = wasm_config_new();
    wasm_engine_t* engine = wasm_engine_new_with_config(config);
@@ -141,7 +188,25 @@ int main(int argc, char *argv[]) {
    wasmtime_func_call(context, &process_item.of.func, args, 1, results, 1, NULL);
 
    std::cout << "Number of 'e's found by Zig: " << results[0].of.i32 << std::endl;
- 
+
+   {
+      QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+      db.setDatabaseName("app_data.db");
+
+      if (!db.open()) {
+         qCritical() << "Error: Connection with database failed:" << db.lastError().text();
+      } else {
+         qDebug() << "SQLite Database connected successfully!";
+
+         // Basic table setup example
+         QSqlQuery query;
+         query.exec("CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY, msg TEXT)");
+         query.prepare("INSERT INTO logs (msg) VALUES (:msg)");
+         query.bindValue(":msg", QString::fromStdString(message));
+         query.exec();
+      }
+   }
+
     // --- 1. Get Vertex Data from WASM ---
    wasmtime_extern_t get_v_ptr_item;
    wasmtime_instance_export_get(context, &instance, "get_vertex_ptr", 14, &get_v_ptr_item);
@@ -153,7 +218,7 @@ int main(int argc, char *argv[]) {
    size_t data_size = 3 * 6 * sizeof(float);
    float* triangle_data_ptr = (float*)(memory_base + v_offset);
 
-   QApplication app(argc, argv);
+   //QApplication app(argc, argv);
    MyGLWidget window;
 
    // Pass the WASM memory pointer to the GL Widget

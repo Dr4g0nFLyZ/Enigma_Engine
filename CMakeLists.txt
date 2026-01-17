@@ -8,8 +8,9 @@ project(HelloWorldQt6 LANGUAGES CXX C)
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 # This looks for glfw3Config.cmake on your system
-find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets Sql)
 find_package(glfw3 3.3 REQUIRED)
+find_package(Freetype REQUIRED)
 
 # Instead of find_package, look for the files directly
 find_path(WASMTIME_INCLUDE_DIR NAMES wasmtime.h)
@@ -45,7 +46,7 @@ add_executable(hello_world
 find_package(OpenGL REQUIRED)
 
 # Link the executable against the necessary Qt6 module with glfw.
-target_link_libraries(hello_world PRIVATE Qt6::Widgets wasmtime::wasmtime glfw OpenGL::GL Qt6::OpenGLWidgets)
+target_link_libraries(hello_world PRIVATE Qt6::Widgets wasmtime::wasmtime glfw OpenGL::GL Qt6::OpenGLWidgets Qt6::Sql Freetype::Freetype)
 
 # Set up the Qt properties for the executable (crucial for linking and deploying)
 # This uses the settings defined by the find_package() command.
