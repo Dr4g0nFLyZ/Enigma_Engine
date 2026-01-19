@@ -35,7 +35,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # 1. Point to where your GLAD headers are located
 include_directories(include) # Adjust this if your headers are in a different folder
 
-add_executable(hello_world 
+add_executable(hello_world
+    glad.c
     main.cpp
 )
 
